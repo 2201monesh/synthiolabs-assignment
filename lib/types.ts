@@ -1,0 +1,20 @@
+export type ChatRole = "user" | "assistant";
+
+export interface ChatMessage {
+  id: string;
+  role: ChatRole;
+  content: string;
+  createdAt: string;
+}
+
+export interface Conversation {
+  id: string;
+  title: string;
+  updatedAt: string;
+}
+
+export interface Suggestion {
+  id: string;
+  label: string;
+  prompt: string;
+}

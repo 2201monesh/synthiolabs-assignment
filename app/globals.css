@@ -1,26 +1,50 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fafafa;
+  --foreground: #202020;
+  --sidebar: #f5f4f4;
+  --sidebar-foreground: #202020;
+  --card: #ffffff;
+  --border: #e6e5e5;
+  --muted: #818181;
+  --accent: #0081f2;
+  --accent-foreground: #ffffff;
+  --shadow-elevation-1: 0 0 0 0.5px rgba(0, 0, 0, 0.08),
+    0 2px 3px -2px rgba(0, 0, 0, 0.08), 0 3px 12px -4px rgba(0, 0, 0, 0.08),
+    0 4px 16px -8px rgba(0, 0, 0, 0.08);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --shadow-elevation-1: var(--shadow-elevation-1);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #131313;
+    --foreground: #f2f1ee;
+    --sidebar: #191919;
+    --sidebar-foreground: #f2f1ee;
+    --card: #1c1c1c;
+    --border: #2c2c2c;
+    --muted: #9a9a9a;
+    --accent: #2f8fe6;
+    --accent-foreground: #ffffff;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
