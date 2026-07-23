@@ -35,7 +35,7 @@ export function MobilePromptBar({ onSend }: MobilePromptBarProps) {
         onChange={(event) => setValue(event.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Message AI Assistant..."
-        className="flex-1 rounded-xl border border-border bg-card px-4 py-2.5 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+        className="flex-1 rounded-xl border border-border bg-card px-4 py-2.5 text-sm text-foreground placeholder:text-muted focus:border-foreground/30 focus:outline-none"
       />
       <VoiceInputButton />
       <IconButton
@@ -43,7 +43,6 @@ export function MobilePromptBar({ onSend }: MobilePromptBarProps) {
         label="Send message"
         disabled={!value.trim()}
         onClick={handleSubmit}
-        className={value.trim() ? "bg-accent text-accent-foreground hover:bg-accent/90" : ""}
       >
         <SendIcon className="h-4 w-4" />
       </IconButton>

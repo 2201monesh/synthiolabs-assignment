@@ -70,7 +70,7 @@ export function PromptBox({
       </div>
       <div
         className={cn(
-          "relative z-10 flex w-full flex-col gap-2 rounded-xl border border-border bg-card shadow-elevation-1 transition-colors focus-within:border-accent",
+          "relative z-10 flex w-full flex-col gap-2 rounded-xl border border-border bg-card shadow-elevation-1 transition-colors focus-within:border-foreground/30",
           variant === "hero" ? "px-5 py-4" : "px-4 py-3"
         )}
       >
@@ -98,7 +98,6 @@ export function PromptBox({
               label="Send message"
               disabled={!value.trim()}
               onClick={onSubmit}
-              className={value.trim() ? "bg-accent text-accent-foreground hover:bg-accent/90" : ""}
             >
               <SendIcon className="h-4 w-4" />
             </IconButton>

@@ -19,7 +19,7 @@ export function IconButton({
       title={label}
       className={cn(
         "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-foreground/70 transition-colors hover:bg-black/5 dark:hover:bg-white/5",
-        active && "bg-accent text-accent-foreground hover:bg-accent",
+        active && "bg-foreground text-background hover:bg-foreground",
         className
       )}
       {...props}
