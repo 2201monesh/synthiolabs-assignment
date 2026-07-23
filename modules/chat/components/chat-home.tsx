@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { PromptBox } from "@/modules/chat/components/prompt-box";
-import { SuggestionChips } from "@/modules/chat/components/suggestion-chips";
 
 interface ChatHomeProps {
   onSend: (content: string) => void;
@@ -32,10 +31,9 @@ export function ChatHome({ onSend }: ChatHomeProps) {
           placeholder="How can I help you today?"
           autoFocus
         />
-        <SuggestionChips onSelect={setValue} />
-        <p className="mt-4 text-center text-xs text-muted">
+        {/* <p className="mt-4 text-center text-xs text-muted">
           AI Assistant can make mistakes. Please double-check responses.
-        </p>
+        </p> */}
       </div>
     </div>
   );

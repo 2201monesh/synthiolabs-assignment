@@ -2,10 +2,18 @@
 
 import { useEffect, useRef } from "react";
 import type { KeyboardEvent } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { IconButton } from "@/components/ui/icon-button";
 import { PlusIcon, SendIcon } from "@/components/ui/icons";
 import { VoiceInputButton } from "@/modules/chat/components/voice-input-button";
+
+const connectedApps = [
+  { name: "Notion", src: "/notion.png", className: "brightness-0" },
+  { name: "Greptile", src: "/greptile-color.png" },
+  { name: "Perplexity", src: "/perplexity-color.png" },
+  { name: "Slack", src: "/slack.png" },
+];
 
 interface PromptBoxProps {
   value: string;
@@ -41,12 +49,24 @@ export function PromptBox({
   }
 
   return (
-    <div className="relative pb-3">
+    <div className="relative pb-2">
       <div
         aria-hidden
-        className="absolute inset-x-5 top-full z-0 flex h-9 -translate-y-4 items-center justify-center rounded-xl border border-border bg-card text-xs text-muted shadow-elevation-1"
+        className="absolute inset-x-0 top-full z-0 flex -translate-y-6 items-center justify-between gap-3 rounded-b-xl border border-border bg-sidebar px-4 pb-3 pt-8 text-xs text-muted"
       >
-        Powered by your AI Assistant — ask anything, in text or voice.
+        <span className="truncate">Get better answers from your apps</span>
+        <span className="flex shrink-0 items-center gap-4">
+          {connectedApps.map((app) => (
+            <Image
+              key={app.name}
+              src={app.src}
+              alt={app.name}
+              width={16}
+              height={16}
+              className={cn("h-4 w-4 object-contain", app.className)}
+            />
+          ))}
+        </span>
       </div>
       <div
         className={cn(

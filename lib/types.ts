@@ -12,9 +12,3 @@ export interface Conversation {
   title: string;
   updatedAt: string;
 }
-
-export interface Suggestion {
-  id: string;
-  label: string;
-  prompt: string;
-}
