@@ -1,14 +1,15 @@
 import { Logo } from "@/components/ui/logo";
 import { IconButton } from "@/components/ui/icon-button";
-import { HelpCircleIcon, PanelLeftIcon } from "@/components/ui/icons";
+import { HelpCircleIcon, PanelLeftIcon, XIcon } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 
 interface SidebarHeaderProps {
   collapsed: boolean;
   onToggle: () => void;
+  onCloseMobile: () => void;
 }
 
-export function SidebarHeader({ collapsed, onToggle }: SidebarHeaderProps) {
+export function SidebarHeader({ collapsed, onToggle, onCloseMobile }: SidebarHeaderProps) {
   return (
     <div
       className={cn(
@@ -19,11 +20,14 @@ export function SidebarHeader({ collapsed, onToggle }: SidebarHeaderProps) {
       <Logo collapsed={collapsed} />
       {!collapsed && (
         <div className="flex items-center gap-1">
-          <IconButton label="Help">
+          <IconButton label="Help" className="hidden md:flex">
             <HelpCircleIcon className="h-4 w-4" />
           </IconButton>
-          <IconButton label="Collapse sidebar" onClick={onToggle}>
+          <IconButton label="Collapse sidebar" onClick={onToggle} className="hidden md:flex">
             <PanelLeftIcon className="h-5 w-5" />
+          </IconButton>
+          <IconButton label="Close sidebar" onClick={onCloseMobile} className="md:hidden">
+            <XIcon className="h-5 w-5" />
           </IconButton>
         </div>
       )}
