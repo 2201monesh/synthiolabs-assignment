@@ -5,7 +5,8 @@ import type { KeyboardEvent, UIEvent } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { IconButton } from "@/components/ui/icon-button";
-import { PlusIcon, SendIcon } from "@/components/ui/icons";
+import { SendIcon } from "@/components/ui/icons";
+import { AttachMenu } from "@/modules/chat/components/attach-menu";
 import { VoiceInputButton } from "@/modules/chat/components/voice-input-button";
 
 const connectedApps = [
@@ -123,17 +124,15 @@ export function PromptBox({
           )}
         </div>
         <div className="flex items-center justify-between">
-          <IconButton type="button" label="Attach file" className="border border-border cursor-pointer">
-            <PlusIcon className="h-4 w-4" />
-          </IconButton>
-          <div className="flex items-center gap-2">
-            <VoiceInputButton />
+          <AttachMenu className="h-8 w-8 border border-border cursor-pointer" />
+          <div className="flex items-center gap-1">
+            <VoiceInputButton className="h-8 w-8" />
             <IconButton
               type="button"
               label="Send message"
               disabled={disabled || !value.trim()}
               onClick={onSubmit}
-              className="cursor-pointer"
+              className="h-8 w-8 cursor-pointer"
             >
               <SendIcon className="h-4 w-4" />
             </IconButton>

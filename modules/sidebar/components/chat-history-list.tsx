@@ -1,5 +1,8 @@
-import { conversations } from "@/data/conversations";
+"use client";
+
+import { useChatSessions } from "@/modules/chat/chat-sessions-context";
 import { ChatHistoryItem } from "@/modules/sidebar/components/chat-history-item";
+import { useSidebarContext } from "@/modules/sidebar/sidebar-context";
 
 interface ChatHistoryListProps {
   collapsed?: boolean;
@@ -7,14 +10,20 @@ interface ChatHistoryListProps {
 }
 
 export function ChatHistoryList({ collapsed, query = "" }: ChatHistoryListProps) {
+  const { sessions, activeSessionId, selectSession } = useChatSessions();
+  const { closeMobileSidebar } = useSidebarContext();
+
   if (collapsed) return null;
 
   const normalizedQuery = query.trim().toLowerCase();
   const filtered = normalizedQuery
-    ? conversations.filter((conversation) =>
-        conversation.title.toLowerCase().includes(normalizedQuery)
-      )
-    : conversations;
+    ? sessions.filter((session) => session.title.toLowerCase().includes(normalizedQuery))
+    : sessions;
+
+  function handleSelect(sessionId: string) {
+    selectSession(sessionId);
+    closeMobileSidebar();
+  }
 
   return (
     <div className="flex flex-col gap-1">
@@ -22,10 +31,17 @@ export function ChatHistoryList({ collapsed, query = "" }: ChatHistoryListProps)
         Recents
       </p>
       {filtered.length === 0 ? (
-        <p className="px-3 py-2 text-sm text-muted">No chats found.</p>
+        <p className="px-3 py-2 text-sm text-muted">
+          {sessions.length === 0 ? "No chats yet." : "No chats found."}
+        </p>
       ) : (
-        filtered.map((conversation) => (
-          <ChatHistoryItem key={conversation.id} conversation={conversation} />
+        filtered.map((session) => (
+          <ChatHistoryItem
+            key={session.id}
+            session={session}
+            isActive={session.id === activeSessionId}
+            onClick={() => handleSelect(session.id)}
+          />
         ))
       )}
     </div>
