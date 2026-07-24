@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { CheckIcon, CopyIcon, PencilSquareIcon } from "@/components/ui/icons";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { MarkdownContent } from "@/modules/chat/components/markdown-content";
 import type { ChatMessage } from "@/lib/types";
 
@@ -98,23 +99,35 @@ export function ChatMessageItem({ message, onEdit, disabled }: ChatMessageItemPr
           {message.content}
         </div>
         <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
-          <button
-            onClick={handleCopy}
-            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-xl text-muted transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
-            aria-label="Copy message"
-            title="Copy message"
-          >
-            {copied ? <CheckIcon className="h-3.5 w-3.5" /> : <CopyIcon className="h-3.5 w-3.5" />}
-          </button>
-          <button
-            onClick={handleStartEdit}
-            disabled={disabled}
-            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-xl text-muted transition-colors hover:bg-black/5 hover:text-foreground disabled:pointer-events-none disabled:cursor-default disabled:opacity-50 dark:hover:bg-white/5"
-            aria-label="Edit message"
-            title="Edit message"
-          >
-            <PencilSquareIcon className="h-3.5 w-3.5" />
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={handleCopy}
+                className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-xl text-muted transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
+                aria-label="Copy message"
+              >
+                {copied ? (
+                  <CheckIcon className="h-3.5 w-3.5" />
+                ) : (
+                  <CopyIcon className="h-3.5 w-3.5" />
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>Copy message</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={handleStartEdit}
+                disabled={disabled}
+                className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-xl text-muted transition-colors hover:bg-black/5 hover:text-foreground disabled:pointer-events-none disabled:cursor-default disabled:opacity-50 dark:hover:bg-white/5"
+                aria-label="Edit message"
+              >
+                <PencilSquareIcon className="h-3.5 w-3.5" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>Edit message</TooltipContent>
+          </Tooltip>
         </div>
       </div>
     );
@@ -129,16 +142,20 @@ export function ChatMessageItem({ message, onEdit, disabled }: ChatMessageItemPr
       <div className="max-w-[85%]">
         <MarkdownContent content={message.content} />
       </div>
-      <button
-        onClick={handleCopy}
-        className={cn(
-          "flex h-7 w-7 cursor-pointer items-center justify-center rounded-xl text-muted transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
-        )}
-        aria-label="Copy response"
-        title="Copy response"
-      >
-        {copied ? <CheckIcon className="h-3.5 w-3.5" /> : <CopyIcon className="h-3.5 w-3.5" />}
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={handleCopy}
+            className={cn(
+              "flex h-7 w-7 cursor-pointer items-center justify-center rounded-xl text-muted transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
+            )}
+            aria-label="Copy response"
+          >
+            {copied ? <CheckIcon className="h-3.5 w-3.5" /> : <CopyIcon className="h-3.5 w-3.5" />}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>Copy response</TooltipContent>
+      </Tooltip>
     </div>
   );
 }
