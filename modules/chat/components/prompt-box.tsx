@@ -22,6 +22,7 @@ interface PromptBoxProps {
   variant?: "hero" | "dock";
   placeholder?: string;
   autoFocus?: boolean;
+  disabled?: boolean;
 }
 
 export function PromptBox({
@@ -31,6 +32,7 @@ export function PromptBox({
   variant = "dock",
   placeholder,
   autoFocus,
+  disabled,
 }: PromptBoxProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -82,6 +84,7 @@ export function PromptBox({
           rows={variant === "hero" ? 2 : 1}
           autoFocus={autoFocus}
           placeholder={placeholder}
+          disabled={disabled}
           className={cn(
             "max-h-52 w-full resize-none overflow-y-auto bg-transparent text-foreground placeholder:text-muted focus:outline-none",
             variant === "hero" ? "text-base" : "text-sm"
@@ -96,7 +99,7 @@ export function PromptBox({
             <IconButton
               type="button"
               label="Send message"
-              disabled={!value.trim()}
+              disabled={disabled || !value.trim()}
               onClick={onSubmit}
             >
               <SendIcon className="h-4 w-4" />

@@ -8,14 +8,15 @@ import { VoiceInputButton } from "@/modules/chat/components/voice-input-button";
 
 interface MobilePromptBarProps {
   onSend: (content: string) => void;
+  disabled?: boolean;
 }
 
-export function MobilePromptBar({ onSend }: MobilePromptBarProps) {
+export function MobilePromptBar({ onSend, disabled }: MobilePromptBarProps) {
   const [value, setValue] = useState("");
 
   function handleSubmit() {
     const trimmed = value.trim();
-    if (!trimmed) return;
+    if (!trimmed || disabled) return;
     onSend(trimmed);
     setValue("");
   }
@@ -34,6 +35,7 @@ export function MobilePromptBar({ onSend }: MobilePromptBarProps) {
         value={value}
         onChange={(event) => setValue(event.target.value)}
         onKeyDown={handleKeyDown}
+        disabled={disabled}
         placeholder="Message AI Assistant..."
         className="flex-1 rounded-xl border border-border bg-card px-4 py-2.5 text-sm text-foreground placeholder:text-muted focus:border-foreground/30 focus:outline-none"
       />
@@ -41,7 +43,7 @@ export function MobilePromptBar({ onSend }: MobilePromptBarProps) {
       <IconButton
         type="button"
         label="Send message"
-        disabled={!value.trim()}
+        disabled={disabled || !value.trim()}
         onClick={handleSubmit}
       >
         <SendIcon className="h-4 w-4" />

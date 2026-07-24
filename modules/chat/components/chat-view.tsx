@@ -22,14 +22,69 @@ function createMessage(role: ChatMessage["role"], content: string): ChatMessage 
 
 export function ChatView() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isStreaming, setIsStreaming] = useState(false);
+
+  async function sendMessage(baseHistory: ChatMessage[], content: string) {
+    const userMessage = createMessage("user", content);
+    const assistantMessage = createMessage("assistant", "");
+    const requestHistory = [...baseHistory, userMessage];
+
+    setMessages([...requestHistory, assistantMessage]);
+    setIsStreaming(true);
+
+    function updateAssistantMessage(updater: (current: string) => string) {
+      setMessages((previous) =>
+        previous.map((message) =>
+          message.id === assistantMessage.id
+            ? { ...message, content: updater(message.content) }
+            : message
+        )
+      );
+    }
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: requestHistory.map(({ role, content: messageContent }) => ({
+            role,
+            content: messageContent,
+          })),
+        }),
+      });
+
+      if (!response.ok || !response.body) {
+        throw new Error("Request failed");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        if (!chunk) continue;
+        updateAssistantMessage((current) => current + chunk);
+      }
+    } catch {
+      updateAssistantMessage(
+        () => "Something went wrong while generating a response. Please try again."
+      );
+    } finally {
+      setIsStreaming(false);
+    }
+  }
 
   function handleSend(content: string) {
-    const userMessage = createMessage("user", content);
-    const assistantMessage = createMessage(
-      "assistant",
-      "This is a placeholder response. Connect an AI backend to make me smarter."
-    );
-    setMessages((previous) => [...previous, userMessage, assistantMessage]);
+    return sendMessage(messages, content);
+  }
+
+  function handleEdit(messageId: string, newContent: string) {
+    const index = messages.findIndex((message) => message.id === messageId);
+    if (index === -1) return;
+    return sendMessage(messages.slice(0, index), newContent);
   }
 
   if (messages.length === 0) {
@@ -40,9 +95,9 @@ export function ChatView() {
     <div className="flex min-h-0 flex-1 flex-col">
       <ChatHeader title={toTitle(messages[0].content)} />
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-        <ChatMessageList messages={messages} />
+        <ChatMessageList messages={messages} onEdit={handleEdit} disabled={isStreaming} />
       </div>
-      <ChatInput onSend={handleSend} />
+      <ChatInput onSend={handleSend} disabled={isStreaming} />
     </div>
   );
 }

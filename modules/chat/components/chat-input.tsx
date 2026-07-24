@@ -6,14 +6,15 @@ import { MobilePromptBar } from "@/modules/chat/components/mobile-prompt-bar";
 
 interface ChatInputProps {
   onSend: (content: string) => void;
+  disabled?: boolean;
 }
 
-export function ChatInput({ onSend }: ChatInputProps) {
+export function ChatInput({ onSend, disabled }: ChatInputProps) {
   const [value, setValue] = useState("");
 
   function handleSubmit() {
     const trimmed = value.trim();
-    if (!trimmed) return;
+    if (!trimmed || disabled) return;
     onSend(trimmed);
     setValue("");
   }
@@ -28,13 +29,14 @@ export function ChatInput({ onSend }: ChatInputProps) {
             onSubmit={handleSubmit}
             variant="dock"
             placeholder="Reply to your AI assistant..."
+            disabled={disabled}
           />
           <p className="mt-2 text-center text-xs text-muted">
             AI Assistant can make mistakes. Please double-check responses.
           </p>
         </div>
       </div>
-      <MobilePromptBar onSend={onSend} />
+      <MobilePromptBar onSend={onSend} disabled={disabled} />
     </>
   );
 }
