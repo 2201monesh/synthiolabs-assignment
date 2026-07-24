@@ -55,6 +55,42 @@
   }
 }
 
+@keyframes blob-drift-1 {
+  0%,
+  100% {
+    transform: translate(0%, 0%) scale(1);
+  }
+  33% {
+    transform: translate(20%, 12%) scale(1.15);
+  }
+  66% {
+    transform: translate(-12%, 16%) scale(0.9);
+  }
+}
+
+@keyframes blob-drift-2 {
+  0%,
+  100% {
+    transform: translate(0%, 0%) scale(1);
+  }
+  33% {
+    transform: translate(-16%, -10%) scale(1.1);
+  }
+  66% {
+    transform: translate(12%, -16%) scale(0.92);
+  }
+}
+
+@keyframes blob-drift-3 {
+  0%,
+  100% {
+    transform: translate(0%, 0%) scale(1);
+  }
+  50% {
+    transform: translate(16%, -12%) scale(1.2);
+  }
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #131313;
