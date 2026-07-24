@@ -19,6 +19,7 @@ const connectedApps = [
 interface PromptBoxProps {
   value: string;
   onChange: (value: string) => void;
+  onVoiceTranscript: (text: string) => void;
   onSubmit: () => void;
   variant?: "hero" | "dock";
   placeholder?: string;
@@ -29,6 +30,7 @@ interface PromptBoxProps {
 export function PromptBox({
   value,
   onChange,
+  onVoiceTranscript,
   onSubmit,
   variant = "dock",
   placeholder,
@@ -126,7 +128,7 @@ export function PromptBox({
         <div className="flex items-center justify-between">
           <AttachMenu className="h-8 w-8 border border-border cursor-pointer" />
           <div className="flex items-center gap-1">
-            <VoiceInputButton className="h-8 w-8" />
+            <VoiceInputButton onTranscript={onVoiceTranscript} className="h-8 w-8" />
             <IconButton
               type="button"
               label="Send message"

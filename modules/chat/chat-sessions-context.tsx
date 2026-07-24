@@ -17,8 +17,29 @@ interface ChatSessionsContextValue {
   isStreaming: boolean;
   startNewChat: () => void;
   selectSession: (sessionId: string) => void;
-  sendMessage: (content: string) => Promise<void>;
+  sendMessage: (content: string, viaVoice?: boolean) => Promise<void>;
   editMessage: (messageId: string, newContent: string) => Promise<void>;
+}
+
+function stripMarkdownForSpeech(text: string) {
+  return text
+    .replace(/```[\s\S]*?```/g, " code block ")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/#{1,6}\s/g, "")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/^[-*+]\s/gm, "")
+    .trim();
+}
+
+function speak(text: string) {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  const cleaned = stripMarkdownForSpeech(text);
+  if (!cleaned) return;
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(cleaned);
+  window.speechSynthesis.speak(utterance);
 }
 
 const ChatSessionsContext = createContext<ChatSessionsContextValue | null>(null);
@@ -57,9 +78,11 @@ export function ChatSessionsProvider({ children }: { children: ReactNode }) {
   async function streamAssistantReply(
     sessionId: string,
     requestHistory: ChatMessage[],
-    assistantMessageId: string
+    assistantMessageId: string,
+    onComplete?: (finalText: string) => void
   ) {
     setIsStreaming(true);
+    let fullText = "";
 
     function updateAssistantMessage(updater: (current: string) => string) {
       updateSessionMessages(sessionId, (messages) =>
@@ -92,8 +115,11 @@ export function ChatSessionsProvider({ children }: { children: ReactNode }) {
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
         if (!chunk) continue;
+        fullText += chunk;
         updateAssistantMessage((current) => current + chunk);
       }
+
+      onComplete?.(fullText);
     } catch {
       updateAssistantMessage(
         () => "Something went wrong while generating a response. Please try again."
@@ -111,9 +137,10 @@ export function ChatSessionsProvider({ children }: { children: ReactNode }) {
     setActiveSessionId(sessionId);
   }
 
-  async function sendMessage(content: string) {
+  async function sendMessage(content: string, viaVoice?: boolean) {
     const userMessage = createMessage("user", content);
     const assistantMessage = createMessage("assistant", "");
+    const onComplete = viaVoice ? speak : undefined;
 
     const existingSession = sessions.find((session) => session.id === activeSessionId);
 
@@ -124,7 +151,12 @@ export function ChatSessionsProvider({ children }: { children: ReactNode }) {
         userMessage,
         assistantMessage,
       ]);
-      await streamAssistantReply(existingSession.id, requestHistory, assistantMessage.id);
+      await streamAssistantReply(
+        existingSession.id,
+        requestHistory,
+        assistantMessage.id,
+        onComplete
+      );
       return;
     }
 
@@ -138,7 +170,7 @@ export function ChatSessionsProvider({ children }: { children: ReactNode }) {
 
     setSessions((previous) => [newSession, ...previous]);
     setActiveSessionId(sessionId);
-    await streamAssistantReply(sessionId, [userMessage], assistantMessage.id);
+    await streamAssistantReply(sessionId, [userMessage], assistantMessage.id, onComplete);
   }
 
   async function editMessage(messageId: string, newContent: string) {

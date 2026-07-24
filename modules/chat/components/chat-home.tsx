@@ -1,22 +1,22 @@
 "use client";
 
-import { useState } from "react";
 import { PromptBox } from "@/modules/chat/components/prompt-box";
 import { MobileMenuButton } from "@/modules/chat/components/mobile-menu-button";
 import { MobilePromptBar } from "@/modules/chat/components/mobile-prompt-bar";
+import { usePromptValue } from "@/modules/chat/use-prompt-value";
 
 interface ChatHomeProps {
-  onSend: (content: string) => void;
+  onSend: (content: string, viaVoice?: boolean) => void;
 }
 
 export function ChatHome({ onSend }: ChatHomeProps) {
-  const [value, setValue] = useState("");
+  const { value, setValue, setVoiceTranscript, isVoiceOrigin, reset } = usePromptValue();
 
   function handleSubmit() {
     const trimmed = value.trim();
     if (!trimmed) return;
-    onSend(trimmed);
-    setValue("");
+    onSend(trimmed, isVoiceOrigin);
+    reset();
   }
 
   return (
@@ -33,6 +33,7 @@ export function ChatHome({ onSend }: ChatHomeProps) {
             <PromptBox
               value={value}
               onChange={setValue}
+              onVoiceTranscript={setVoiceTranscript}
               onSubmit={handleSubmit}
               variant="hero"
               placeholder="How can I help you today?"

@@ -1,22 +1,22 @@
 "use client";
 
-import { useState } from "react";
 import { PromptBox } from "@/modules/chat/components/prompt-box";
 import { MobilePromptBar } from "@/modules/chat/components/mobile-prompt-bar";
+import { usePromptValue } from "@/modules/chat/use-prompt-value";
 
 interface ChatInputProps {
-  onSend: (content: string) => void;
+  onSend: (content: string, viaVoice?: boolean) => void;
   disabled?: boolean;
 }
 
 export function ChatInput({ onSend, disabled }: ChatInputProps) {
-  const [value, setValue] = useState("");
+  const { value, setValue, setVoiceTranscript, isVoiceOrigin, reset } = usePromptValue();
 
   function handleSubmit() {
     const trimmed = value.trim();
     if (!trimmed || disabled) return;
-    onSend(trimmed);
-    setValue("");
+    onSend(trimmed, isVoiceOrigin);
+    reset();
   }
 
   return (
@@ -26,6 +26,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
           <PromptBox
             value={value}
             onChange={setValue}
+            onVoiceTranscript={setVoiceTranscript}
             onSubmit={handleSubmit}
             variant="dock"
             placeholder="Reply to your AI assistant..."

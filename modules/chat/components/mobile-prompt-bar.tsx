@@ -1,24 +1,24 @@
 "use client";
 
-import { useState } from "react";
 import type { KeyboardEvent } from "react";
 import { IconButton } from "@/components/ui/icon-button";
 import { SendIcon } from "@/components/ui/icons";
 import { VoiceInputButton } from "@/modules/chat/components/voice-input-button";
+import { usePromptValue } from "@/modules/chat/use-prompt-value";
 
 interface MobilePromptBarProps {
-  onSend: (content: string) => void;
+  onSend: (content: string, viaVoice?: boolean) => void;
   disabled?: boolean;
 }
 
 export function MobilePromptBar({ onSend, disabled }: MobilePromptBarProps) {
-  const [value, setValue] = useState("");
+  const { value, setValue, setVoiceTranscript, isVoiceOrigin, reset } = usePromptValue();
 
   function handleSubmit() {
     const trimmed = value.trim();
     if (!trimmed || disabled) return;
-    onSend(trimmed);
-    setValue("");
+    onSend(trimmed, isVoiceOrigin);
+    reset();
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLInputElement>) {
@@ -39,7 +39,7 @@ export function MobilePromptBar({ onSend, disabled }: MobilePromptBarProps) {
         placeholder="Message AI Assistant..."
         className="flex-1 rounded-xl border border-border bg-card px-4 py-2.5 text-sm text-foreground placeholder:text-muted focus:border-foreground/30 focus:outline-none"
       />
-      <VoiceInputButton />
+      <VoiceInputButton onTranscript={setVoiceTranscript} />
       <IconButton
         type="button"
         label="Send message"
