@@ -94,7 +94,7 @@ export function ChatView() {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       <ChatHeader title={toTitle(messages[0].content)} />
-      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+      <div className="scrollbar-hide flex min-h-0 flex-1 flex-col overflow-y-auto">
         <ChatMessageList messages={messages} onEdit={handleEdit} disabled={isStreaming} />
       </div>
       <ChatInput onSend={handleSend} disabled={isStreaming} />

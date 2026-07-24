@@ -12,6 +12,7 @@ export function VoiceInputButton() {
       type="button"
       label={isRecording ? "Stop voice input" : "Start voice input"}
       onClick={() => setIsRecording((value) => !value)}
+      className="cursor-pointer"
     >
       <MicIcon className="h-4 w-4" />
     </IconButton>

@@ -94,13 +94,13 @@ export function ChatMessageItem({ message, onEdit, disabled }: ChatMessageItemPr
 
     return (
       <div className="group flex flex-col items-end gap-1">
-        <div className="max-w-[80%] rounded-xl border border-border bg-sidebar px-4 py-2.5 text-sm leading-relaxed text-foreground">
+        <div className="max-w-[80%] rounded-xl border border-border bg-sidebar px-3 py-1.5 text-sm leading-relaxed text-foreground">
           {message.content}
         </div>
         <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
           <button
             onClick={handleCopy}
-            className="flex h-7 w-7 items-center justify-center rounded-xl text-muted transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
+            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-xl text-muted transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
             aria-label="Copy message"
             title="Copy message"
           >
@@ -109,7 +109,7 @@ export function ChatMessageItem({ message, onEdit, disabled }: ChatMessageItemPr
           <button
             onClick={handleStartEdit}
             disabled={disabled}
-            className="flex h-7 w-7 items-center justify-center rounded-xl text-muted transition-colors hover:bg-black/5 hover:text-foreground disabled:pointer-events-none disabled:opacity-50 dark:hover:bg-white/5"
+            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded-xl text-muted transition-colors hover:bg-black/5 hover:text-foreground disabled:pointer-events-none disabled:cursor-default disabled:opacity-50 dark:hover:bg-white/5"
             aria-label="Edit message"
             title="Edit message"
           >
@@ -132,7 +132,7 @@ export function ChatMessageItem({ message, onEdit, disabled }: ChatMessageItemPr
       <button
         onClick={handleCopy}
         className={cn(
-          "flex h-7 w-7 items-center justify-center rounded-xl text-muted transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
+          "flex h-7 w-7 cursor-pointer items-center justify-center rounded-xl text-muted transition-colors hover:bg-black/5 hover:text-foreground dark:hover:bg-white/5"
         )}
         aria-label="Copy response"
         title="Copy response"
