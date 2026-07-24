@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import type { KeyboardEvent } from "react";
 import { IconButton } from "@/components/ui/icon-button";
 import { SendIcon } from "@/components/ui/icons";
@@ -13,6 +14,7 @@ interface MobilePromptBarProps {
 
 export function MobilePromptBar({ onSend, disabled }: MobilePromptBarProps) {
   const { value, setValue, setVoiceTranscript, isVoiceOrigin, reset } = usePromptValue();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   function handleSubmit() {
     const trimmed = value.trim();
@@ -28,9 +30,17 @@ export function MobilePromptBar({ onSend, disabled }: MobilePromptBarProps) {
     }
   }
 
+  function handleVoiceTranscript(text: string) {
+    setVoiceTranscript(text);
+    // Return focus to the input so Enter submits the message instead of
+    // re-triggering the mic button, which still holds focus after being clicked.
+    inputRef.current?.focus();
+  }
+
   return (
     <div className="flex items-center gap-2 border-t border-border bg-background px-3 py-3 md:hidden">
       <input
+        ref={inputRef}
         type="text"
         value={value}
         onChange={(event) => setValue(event.target.value)}
@@ -39,7 +49,7 @@ export function MobilePromptBar({ onSend, disabled }: MobilePromptBarProps) {
         placeholder="Message AI Assistant..."
         className="flex-1 rounded-xl border border-border bg-card px-4 py-2.5 text-sm text-foreground placeholder:text-muted focus:border-foreground/30 focus:outline-none"
       />
-      <VoiceInputButton onTranscript={setVoiceTranscript} />
+      <VoiceInputButton onTranscript={handleVoiceTranscript} />
       <IconButton
         type="button"
         label="Send message"

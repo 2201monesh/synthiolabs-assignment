@@ -66,6 +66,13 @@ export function PromptBox({
     updateScrollFade(event.currentTarget);
   }
 
+  function handleVoiceTranscript(text: string) {
+    onVoiceTranscript(text);
+    // Return focus to the textarea so Enter submits the message instead of
+    // re-triggering the mic button, which still holds focus after being clicked.
+    textareaRef.current?.focus();
+  }
+
   return (
     <div className={cn("relative", variant === "hero" && "pb-2")}>
       {variant === "hero" && (
@@ -128,7 +135,7 @@ export function PromptBox({
         <div className="flex items-center justify-between">
           <AttachMenu className="h-8 w-8 border border-border cursor-pointer" />
           <div className="flex items-center gap-1">
-            <VoiceInputButton onTranscript={onVoiceTranscript} className="h-8 w-8" />
+            <VoiceInputButton onTranscript={handleVoiceTranscript} className="h-8 w-8" />
             <IconButton
               type="button"
               label="Send message"

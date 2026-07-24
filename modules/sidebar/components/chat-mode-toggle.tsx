@@ -15,10 +15,18 @@ export function ChatModeToggle({ collapsed }: ChatModeToggleProps) {
   if (collapsed) {
     return (
       <div className="flex flex-col items-center gap-1 px-2">
-        <IconButton label="Text chat" active={mode === "text"} onClick={() => setMode("text")}>
+        <IconButton
+          label="Text chat"
+          onClick={() => setMode("text")}
+          className={cn(mode === "text" && "bg-black/5 dark:bg-white/5")}
+        >
           <ChatBubbleIcon className="h-4 w-4" />
         </IconButton>
-        <IconButton label="Voice chat" active={mode === "voice"} onClick={() => setMode("voice")}>
+        <IconButton
+          label="Voice chat"
+          onClick={() => setMode("voice")}
+          className={cn(mode === "voice" && "bg-black/5 dark:bg-white/5")}
+        >
           <MicIcon className="h-4 w-4" />
         </IconButton>
       </div>

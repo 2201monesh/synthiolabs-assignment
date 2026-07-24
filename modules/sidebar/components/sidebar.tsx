@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
 import { useSidebarContext } from "@/modules/sidebar/sidebar-context";
 import { SidebarHeader } from "@/modules/sidebar/components/sidebar-header";
 import { ChatModeToggle } from "@/modules/sidebar/components/chat-mode-toggle";
+import { NewChatRow } from "@/modules/sidebar/components/new-chat-row";
 import { ChatHistoryList } from "@/modules/sidebar/components/chat-history-list";
-import { SidebarFooter } from "@/modules/sidebar/components/sidebar-footer";
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
@@ -38,10 +38,12 @@ export function Sidebar() {
           onCloseMobile={closeMobileSidebar}
         />
         <ChatModeToggle collapsed={collapsed} />
-        <div className="mt-4 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-2">
+        <div className="mt-2">
+          <NewChatRow collapsed={collapsed} />
+        </div>
+        <div className="mt-2 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-2">
           <ChatHistoryList collapsed={collapsed} />
         </div>
-        <SidebarFooter collapsed={collapsed} />
       </aside>
     </>
   );
