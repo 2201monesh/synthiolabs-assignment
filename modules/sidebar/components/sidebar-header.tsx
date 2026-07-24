@@ -17,7 +17,7 @@ export function SidebarHeader({ collapsed, onToggle, onCloseMobile }: SidebarHea
         collapsed ? "flex-col justify-center" : "justify-between"
       )}
     >
-      <Logo collapsed={collapsed} />
+      {!collapsed && <Logo />}
       {!collapsed && (
         <div className="flex items-center gap-1">
           <IconButton label="Help" className="hidden md:flex">

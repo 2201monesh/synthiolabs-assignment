@@ -17,7 +17,7 @@ interface ChatSessionsContextValue {
   isStreaming: boolean;
   startNewChat: () => void;
   selectSession: (sessionId: string) => void;
-  sendMessage: (content: string, viaVoice?: boolean) => Promise<void>;
+  sendMessage: (content: string, viaVoice?: boolean, onSpeechEnd?: () => void) => Promise<void>;
   editMessage: (messageId: string, newContent: string) => Promise<void>;
 }
 
@@ -33,12 +33,20 @@ function stripMarkdownForSpeech(text: string) {
     .trim();
 }
 
-function speak(text: string) {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+function speak(text: string, onEnd?: () => void) {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+    onEnd?.();
+    return;
+  }
   const cleaned = stripMarkdownForSpeech(text);
-  if (!cleaned) return;
+  if (!cleaned) {
+    onEnd?.();
+    return;
+  }
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(cleaned);
+  utterance.onend = () => onEnd?.();
+  utterance.onerror = () => onEnd?.();
   window.speechSynthesis.speak(utterance);
 }
 
@@ -121,9 +129,9 @@ export function ChatSessionsProvider({ children }: { children: ReactNode }) {
 
       onComplete?.(fullText);
     } catch {
-      updateAssistantMessage(
-        () => "Something went wrong while generating a response. Please try again."
-      );
+      const errorText = "Something went wrong while generating a response. Please try again.";
+      updateAssistantMessage(() => errorText);
+      onComplete?.(errorText);
     } finally {
       setIsStreaming(false);
     }
@@ -137,10 +145,10 @@ export function ChatSessionsProvider({ children }: { children: ReactNode }) {
     setActiveSessionId(sessionId);
   }
 
-  async function sendMessage(content: string, viaVoice?: boolean) {
+  async function sendMessage(content: string, viaVoice?: boolean, onSpeechEnd?: () => void) {
     const userMessage = createMessage("user", content);
     const assistantMessage = createMessage("assistant", "");
-    const onComplete = viaVoice ? speak : undefined;
+    const onComplete = viaVoice ? (text: string) => speak(text, onSpeechEnd) : undefined;
 
     const existingSession = sessions.find((session) => session.id === activeSessionId);
 

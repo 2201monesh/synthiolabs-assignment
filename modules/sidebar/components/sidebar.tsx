@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useSidebarContext } from "@/modules/sidebar/sidebar-context";
 import { SidebarHeader } from "@/modules/sidebar/components/sidebar-header";
-import { NewChatRow } from "@/modules/sidebar/components/new-chat-row";
+import { ChatModeToggle } from "@/modules/sidebar/components/chat-mode-toggle";
 import { ChatHistoryList } from "@/modules/sidebar/components/chat-history-list";
 import { SidebarFooter } from "@/modules/sidebar/components/sidebar-footer";
 
@@ -37,7 +37,7 @@ export function Sidebar() {
           onToggle={() => setCollapsed((value) => !value)}
           onCloseMobile={closeMobileSidebar}
         />
-        <NewChatRow collapsed={collapsed} />
+        <ChatModeToggle collapsed={collapsed} />
         <div className="mt-4 flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-2">
           <ChatHistoryList collapsed={collapsed} />
         </div>

@@ -41,6 +41,20 @@ export function MicIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+export function MicOffIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...baseProps(props)}>
+      <path d="M9 9v2a3 3 0 0 0 4.6 2.6" />
+      <path d="M15 9.3V6a3 3 0 0 0-5.9-.6" />
+      <path d="M5 11a7 7 0 0 0 10.3 6.2" />
+      <path d="M18.5 12.5A7 7 0 0 0 19 11" />
+      <line x1="12" y1="18" x2="12" y2="21" />
+      <line x1="9" y1="21" x2="15" y2="21" />
+      <line x1="3" y1="3" x2="21" y2="21" />
+    </svg>
+  );
+}
+
 export function SendIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg {...baseProps(props)}>
