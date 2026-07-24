@@ -6,3 +6,10 @@ export interface ChatMessage {
   content: string;
   createdAt: string;
 }
+
+export interface ChatSession {
+  id: string;
+  title: string;
+  messages: ChatMessage[];
+  updatedAt: string;
+}

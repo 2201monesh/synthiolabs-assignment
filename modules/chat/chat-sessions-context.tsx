@@ -1,14 +1,18 @@
 "use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
-import type { ChatMessage } from "@/lib/types";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import type { ChatMessage, ChatSession } from "@/lib/types";
+import {
+  ensureAnonymousSession,
+  loadSessions,
+  persistAssistantContent,
+  persistEditTruncation,
+  persistNewSession,
+  persistTurn,
+  touchSession,
+} from "@/modules/chat/chat-persistence";
 
-export interface ChatSession {
-  id: string;
-  title: string;
-  messages: ChatMessage[];
-  updatedAt: string;
-}
+export type { ChatSession } from "@/lib/types";
 
 interface ChatSessionsContextValue {
   sessions: ChatSession[];
@@ -72,6 +76,24 @@ export function ChatSessionsProvider({ children }: { children: ReactNode }) {
 
   const activeMessages = sessions.find((session) => session.id === activeSessionId)?.messages ?? [];
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function bootstrap() {
+      await ensureAnonymousSession();
+      const loaded = await loadSessions();
+      if (!cancelled) setSessions(loaded);
+    }
+
+    // Persistence is best-effort: if Supabase isn't reachable or anonymous
+    // sign-in isn't enabled yet, the app keeps working with in-memory state.
+    bootstrap().catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   function updateSessionMessages(
     sessionId: string,
     updater: (messages: ChatMessage[]) => ChatMessage[]
@@ -102,6 +124,12 @@ export function ChatSessionsProvider({ children }: { children: ReactNode }) {
       );
     }
 
+    function finalize(text: string) {
+      onComplete?.(text);
+      persistAssistantContent(assistantMessageId, text).catch(() => {});
+      touchSession(sessionId).catch(() => {});
+    }
+
     try {
       const response = await fetch("/api/chat", {
         method: "POST",
@@ -127,11 +155,11 @@ export function ChatSessionsProvider({ children }: { children: ReactNode }) {
         updateAssistantMessage((current) => current + chunk);
       }
 
-      onComplete?.(fullText);
+      finalize(fullText);
     } catch {
       const errorText = "Something went wrong while generating a response. Please try again.";
       updateAssistantMessage(() => errorText);
-      onComplete?.(errorText);
+      finalize(errorText);
     } finally {
       setIsStreaming(false);
     }
@@ -159,6 +187,7 @@ export function ChatSessionsProvider({ children }: { children: ReactNode }) {
         userMessage,
         assistantMessage,
       ]);
+      persistTurn(existingSession.id, userMessage, assistantMessage).catch(() => {});
       await streamAssistantReply(
         existingSession.id,
         requestHistory,
@@ -178,6 +207,7 @@ export function ChatSessionsProvider({ children }: { children: ReactNode }) {
 
     setSessions((previous) => [newSession, ...previous]);
     setActiveSessionId(sessionId);
+    persistNewSession(newSession).catch(() => {});
     await streamAssistantReply(sessionId, [userMessage], assistantMessage.id, onComplete);
   }
 
@@ -194,6 +224,12 @@ export function ChatSessionsProvider({ children }: { children: ReactNode }) {
     const requestHistory = [...baseHistory, userMessage];
 
     updateSessionMessages(session.id, () => [...baseHistory, userMessage, assistantMessage]);
+    persistEditTruncation(
+      session.id,
+      baseHistory.map((message) => message.id),
+      userMessage,
+      assistantMessage
+    ).catch(() => {});
     await streamAssistantReply(session.id, requestHistory, assistantMessage.id);
   }
 
